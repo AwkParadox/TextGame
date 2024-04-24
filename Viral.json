@@ -1,0 +1,295 @@
+{
+    "start_state" : "main_menu",
+    
+    "states" : {
+        
+        "main_menu" : {
+            "text" : "Not A Virus",
+            "next_state" : [
+                {
+                    "state_name" : "start_game"
+                },
+                {
+                    "state_name" : "option"
+                }
+            ]
+        },
+        "start_game" : {
+            "text" : [
+                {
+                    "text" : "Hope you enjoyed your flight Dr. ... Sorry, but I am completely blanking on your name! What was it again?"
+                },
+                {
+                    "text" : "Nice to meet you Dr. ",
+                    "text2" : "<br>Hope you enjoy your stay in Wuhan!"
+                },
+                {
+                    "text" : "<i>*As you leave the airport you think to yourself*</i>,<brYou: When did I even get on a plane? and Wuhan of all places???<br> And wait a minute did that flight attendent just call me Docter? What the H E double hockey sticks is going on"
+                },
+                {
+                    "text" : "<i>*You hear a constant car honking in the distance. Followed by a LOUD*</i><br>???:Hey Dr. "
+                },
+                {
+                    "text" : "<i>*You look around and behind you but then you realize that he is talking to YOU*</i>"
+                },
+                {
+                    "text" : "<i>*You walk over to what you think is the taxi guy calling for you*</i><br>You: Hey mister, are you calling for me?<br>???: Ofc I am silly monkey! C'mon hop in! The whole village is waiting for you!"
+                },
+                {
+                    "text" : "<i>*Hmm Fuck it*</i><br>You: Yea!! Lets Go!" 
+                },
+                {
+                    "text" : "???: I had such a loooong day, I slipped on like atleast 12 bananas. <br>You: How have u sli- <br>???:And everyone at the village is like Pueblo do this, Pueblo do that, you know what I mean.<br>You: Ye I totally get wha- <br> Pueblo: And the weather today! Like my goodness is it humid!"
+                },
+                {
+                    "text" : "Pueblo: Also yesterday the traffic was soo bad but I was just dancin around in my car the whole time. <br>Speaking of dancing I always wanted to become a dancer and even been trying to choreograph my own routine. Do you like to dance? What about Singing? I hate my own voice, but sometime the vocals just come out you feel me?<br><i>*Does this guy stop yapping*</i>"
+                },
+                {
+                    "text" : ""
+                },
+                {
+                    "text" : "Pueblo: ... And dont get me started on the McTortas! They get my order wrong everytime, I dont know why I keep going back. Anyways we have arrived!"
+                },
+                {
+                    "text" : "You: Do I just get out here or..?<br>Pueblo: Ah yes ofc! This is your destination<br><i>*Pueblo proceeds to boot you out of the car*</i>"
+                }
+            ]
+
+        },
+        "option" : {
+            "text" : "Setting"
+        },
+        "gameplay_loop" : {
+            "intro" : [
+                {
+                    "text" : "<i>You've exited the car to see a giant bamboo forest infront of you, with a statue of what looks to be a monkey?</i>"
+                },
+                {
+                    "text" : "<i>You look at the front of the statue and it reads \"Sun Wukong\"<i><br>You: Sun Wukong huh. Name sounds familiar but I can't put my finger on it"
+                },
+                {
+                    "text" : "<i>*Rumbles* THE STATUE START COMING TO LIFE</i><br>You: Woahhhhh"
+                },
+                {
+                    "text" : "Sun Wukong: <b>Whose called my name! Ah another lost soul, Enter the forest and there you shall find one self. You will be face with many challenges and tribulations but if you manage to reach the village, there the monkies will answer your questions.</b>"
+                },
+                {
+                    "text" : "<i>*You see two portals show up, which one shall you choose to go through*<i>"
+                }
+
+            ]  
+        },
+        "red_events" : [
+            {
+                "text" : "<i>You see a giant vault as go through the portal, on the face of it there is a keypad needing a 4 digit code, you also notice that it indicates only 5 tries</i><br>You: hmm what should I try first?",
+                "input" : "<center><form id='event1form' style='position: relative; top: 150px;   '><input type='text' id='uservault'><button id='vaultButton' type='button' onclick=\"vault()\">Submit</button></form></center>",
+                "fail" : "*Beep, Beep, Beep* The vault starts to shake uncontrollably after the last failed attempt.",
+                "pass" : "The safe opens and come spilling out thousand of gold. But then you realize you don't have pocket and must venture forth!<br>However you did a suddle *DING* in the background",
+                "info" : "alert('You can enter in a 4 digit code and the safe will tell you whether the number is the correct number and/or in the the correct position. With that information try to figure out the 4 digit code within 5 total attempts. Best of Luck!')"
+            },
+            {
+                "text" : "<i>You see a piece of paper on the wall and you go to pick it up</i>",
+                "text2" : "<br><i>You notice that it looks like your hand writing and reads:</i>",
+                "info" : "alert('Solve the riddle.')",
+                "input" : "<center><form id='riddleform' style='position: relative; top: 350px;'><input type='text' id='userriddle'><button id='riddlebutton' type='button' onclick=\"riddle()\">Submit</button></form></center>",
+                "riddletextbox" : "<div id='riddletextbox' class='speechbox' style='max-width: 200px; top: 150px;max-height: 190px'></div>",
+                "pass" : "<i>The paper shines and starts to float out of your hands. It then sparkles into the sky showing a beautiful lightshow<br>*DING* You hear a ding at the end of the lighthshow</i><br>You: Time to move fowards I guess!",
+                "fail" : "<i>The paper burns ups in your hands leaving light burns marks</i><br>You: Ouch! I don't think I answered that very well... Time to move fowards I guess.",
+                "riddles" : [
+                    {
+                        "text" : "The more you take, the more you leave behind. What am I?"
+                    },
+                    {
+                        "text" : "Joe's father has three sons : Snap, Crackle and _____ ?"
+                    },
+                    {
+                        "text" : "I am tall when I'm young and short when I'm old. I can brighten your day, unless it's windy. What am I?"
+                    },
+                    {
+                        "text" : "What is more useful when it is broken?"
+                    },
+                    {
+                        "text" : "Before Mount Everest was discovered, what was the highest mountain on Earth?"
+                    },
+                    {
+                        "text" : "What 7 letter word is spelled the same way backwards and forewords?"
+                    },
+                    {
+                        "text" : "What has a head, a tail, is brown, and has no legs?"
+                    },
+                    {
+                        "text" : "What tastes better than it smells?"
+                    },
+                    {
+                        "text" : "What is so delicate that even saying its name will break it?"
+                    },
+                    {
+                        "text" : "What gets wetter the more it dries?"
+                    },
+                    {
+                        "text" : "You bury me when I'm alive and dig me up when I'm dead. What am I?"
+                    },
+                    {
+                        "text" : "What starts with ‘e,' ends with ‘e,' and contains one letter?"
+                    }
+                ],
+                "riddlehint" : [
+                    {
+                        "text" : "It takes two to tango."
+                    },
+                    {
+                        "text" : "It's not Pop."
+                    },
+                    {
+                        "text" : "It seems to me you lived your life."
+                    },
+                    {
+                        "text" : "No-one knows if it came first."
+                    },
+                    {
+                        "text" : "It's not the second highest mountain."
+                    },
+                    {
+                        "text" : "Vroom vroom."
+                    },
+                    {
+                        "text" : "Good luck!"
+                    },
+                    {
+                        "text" : "French kissing."
+                    },
+                    {
+                        "text" : "It is a true friend who never betrays."
+                    },
+                    {
+                        "text" : "Don't forget to bring one."
+                    },
+                    {
+                        "text" : "Sometimes you can smoke me."
+                    },
+                    {
+                        "text" : "Seal it with a kiss."
+                    }
+                ],
+                "riddleanswer" : [
+                    {
+                        "text" : "footsteps",
+                        "text2" : "footstep"
+                    },
+                    {
+                        "text" : "joe",
+                        "text2" : "joe"
+                    },
+                    {
+                        "text" : "a candle",
+                        "text2" : "candle"
+                    },
+                    {
+                        "text" : "an egg",
+                        "text2" : "egg"
+                    },
+                    {
+                        "text" : "mount everest",
+                        "text2" : "mt. everest"
+                    },
+                    {
+                        "text" : "racecar",
+                        "text2" : "race car"
+                    },
+                    {
+                        "text" : "a penny",
+                        "text2" : "penny"
+                    },
+                    {
+                        "text" : "a tongue",
+                        "text2" : "tongue"
+                    },
+                    {
+                        "text" : "silence",
+                        "text2" : "silence"
+                    },
+                    {
+                        "text" : "a towel",
+                        "text2" : "towel"
+                    },
+                    {
+                        "text" : "a plant",
+                        "text2" : "plant"
+                    },
+                    {
+                        "text" : "an envelope",
+                        "text2" : "envelope"
+                    }
+                ]
+            }
+        ],
+        "green_events" : [
+            {
+                "text" : "<i>You see an atm in the middle and you decide to kick it</i>",
+                "pass" : "*After your amazing perseverance, the atm finally budged dropping a shit ton of weapons.<br>You: Hmm these weapon would be nice if I knew how to use any of it. Ehh whatevers I shall go onwards!<br>*DING* <i>A loud ding echos in the distance</i>",
+                "info" : "alert('You can choose to kick the ATM lightly or hard where the hard kick might get it closer to opening but may be more likely to completely lock up. Try to open the ATM without getting it to lock up! Goodluck!')",
+                "kick" : [
+                    {
+                        "text" : "You: Wow that hurt, but definately worth another go at it"
+                    },
+                    {
+                        "text" : "You: OUUUUCHHH... Maybe I should stop... What am I kidding lets give it another go"
+                    },
+                    {
+                        "text" : "You: My foot is gonna be made of steel by the end of this, lets keep it going"
+                    },
+                    {
+                        "text" : "You: This ATM needs to have something of value, Maybe if i kick it around some more it'll budge"
+                    }
+                ]
+            },
+            {
+                "text" : "<i>*You notice a human like guy with a bomb shaped head, as well as a 3x3 game board on a table*</i><br>Shirobon: Welcome traveller! What's with odd face? Come on take a seat",
+                "text2" : "Shirobon: You will test your luck against me. In one of these tiles there is a hidden bomb. We will take turns fliping tiles over and whoever finds the bomb shall lose! Good Luck Traveller!",
+                "info" : "alert('You will take turns versus Shirobon selecting tiles, if you select the one with the bomb you lose, but if Shirobon selects the tile with the bomb or there is only 1 tile left on youe turn you win!')",
+                "safe" : [
+                    {
+                        "text" : "You: Phew not worried at all",
+                        "text2" : "Shirobon: Hmmm..."
+                    },
+                    {
+                        "text" : "You: I'm safe this time, your turn Shirobon"
+                    },
+                    {
+                        "text" : "You: Guess my lucks not over yet!"
+                    },
+                    {
+                        "text" : "You: How many more of these tiles do I have to flip!"
+                    }
+                ],
+                "lose" : [
+                    {
+                        "text" : "*ssssssssssssssssssss*<br>You: uhh ohh",
+                        "text2" : "*ssssssssssssssssssss*<br>Shirobon: thats not a good sound"
+                    }
+                ],
+                "win" : [
+                    {
+                        "text" : "You: How did I not get hurt by that exlosion?? Oh well, ONWARDS!<br><i>*You hear a slight *DING* as the explosion fades away</i>",
+                        "text2" : "Shirobon: Ahh all in another days work, PEACE",
+                        "text3" : "<i> *As you recover from the bomb you notice Shirobon is gone*</i><br>You: I guess I guess I just keep moving onwards"
+                    },
+                    {
+                        "text" : "Shirobon: Guess its only fair I don't make you pick the last one...<br>Well go on ahead before I blow both of us up"
+                    }
+                ]
+            }
+        ],
+        "ending" : {
+            "text" : [
+                {
+                    "text" : "<i>Monkey 1: \"Welcome to Village Dr. \"</i>",
+                    "text2" : "<br>We have been expecting you. Follow me, I will take you to our leader"
+                },
+                {
+                    "text" : "<i>You follow the monkey expecting to see Sun Wukong but as you walk into the hut you see...</i>"
+                }
+            ]
+        }
+    }
+}

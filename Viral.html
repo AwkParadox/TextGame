@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <style>
+        .speechbox {
+            width: 95%;
+            margin: 10px auto;
+            border: 2px solid #000000;
+            padding: 10px;
+            text-align: center;
+            font-weight: 900;
+            color: #000000;
+            font-family: arial;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .biggerbutton {
+            width: 50px;
+            height: 50px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+
+            position: absolute;
+            justify-items: end;
+        }
+    </style>
+</head>
+
+<body id="Background" style="background-color: #3393AC" style>
+    <div id="Main_Menu">
+        <center>
+            <img id="title" src="MonkeyViral.png" width="300">
+            <div style="padding: 50px;"></div>
+
+            <button style="height: 100px;width: 200px;" onclick="next_state('start_game')">Start Game</button>
+            <div style="padding: 5px"></div>
+            <button style="height: 100px;width: 200px;" onclick="next_state('gameplay_loop')">Skip Beginning</button>
+        </center>
+    </div>
+    <div id="New_Char" style="display:none;">
+        <center>
+            <div id="maintext" class="speechbox"></div>
+            <div id="spacer" class="bigspace"></div>
+            <button id="but-1" style="display: none; position: fixed; bottom: 20px; right: 20px;"></button>
+        </center>
+    </div>
+
+    <div id="Map">
+
+    </div>
+    <div id="gameloop" style="display:none">
+        <div id="maintext2" class="speechbox"></div>
+        <button id="but-2" style="display: none; position: fixed; bottom: 20px; right: 20px;"></button>
+        <button id="but-3" style="display: none; position: fixed; bottom: 20px; right: 40px;">?</button>
+        <img id="mainfoe" src="" style="position: fixed; right: 0; top: 150px; max-height: 300px; padding: 10px;">
+        <img id="you" src="YouRun.png" style="position: fixed; left: 0; top: 150px; max-height: 300px; padding: 10px;">
+        <div id="mainbut">
+            <button id="mainbut-1" style="position: fixed; left: 10; top: 450px; width: 300px;"></button>
+            <button id="mainbut-2" style="position: fixed; left: 10; top: 480px; width: 300px;"></button>
+        </div>
+        <div id="event">
+        </div>
+    </div>
+
+    <div id="end" style="display: none;">
+        <div id="maintext3" class="speechbox"></div>
+        <img id="you" src="YouHmm.png" style="position: fixed; left: 0; top: 150px; max-height: 300px; padding: 10px;">
+        <button id="but-4" style="display: none; position: fixed; bottom: 20px; right: 20px;"></button>
+    </div>
+    <script>
+        var game_data
+        var current_state
+        var stim = 0;
+        var dope = 0;
+        var charectername = "You";
+        var startgamecounter = 0;
+        var gameplaycounter = 0;
+        var greenwinner = 0;
+        var redwinner = 0;
+        var clickcount = 0;
+        var vaultinprogress = 0;
+        var vaulttries = 0;
+        var atminprogress = 0;
+        var kickprogress = 0;
+        var riddleinprogress = 0;
+        var riddlenumber = 0;
+        var riddleattemptes = 0;
+        var bombinprogress = 0;
+        var tiles;
+        var temptile;
+        var bombbomb;
+        var bombuserturn = 0;
+        var endingcounter = 0;
+
+
+        $.getJSON("Viral.json", function (data) {
+            game_data = data;
+            current_state = data['start_state']
+        });
+
+        function randomint(min, max) {
+            const minCeiled = Math.ceil(min);
+            const maxFloored = Math.floor(max);
+            return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
+        }
+
+        function getcharname() {
+            charectername = document.getElementById('charname').value;
+            console.log(charectername);
+        }
+
+        function vault() {
+            if (vaultinprogress == 0) {
+                $('#event').show()
+                var randomkey = randomint(1000, 9999);
+                vaultkey = randomkey.toString();
+                vaulttries = 0;
+
+            }
+            var userkey = document.getElementById('uservault').value;
+            vaultinprogress = 1;
+            $('#maintext2').text("*Testing Input:*" + userkey + " Current Attemp #" + (vaulttries + 2))
+            console.log(vaultkey)
+
+            for (let i = 0; i < 4; i++) {
+                if (userkey[i] == vaultkey[i]) {
+                    $('#maintext2').append("<br>Position: " + i + " is correct number & correct placement!")
+                }
+                else if (vaultkey.includes(userkey[i])) {
+                    $('#maintext2').append("<br>Position: " + i + " is correct number but INCORRECT placement!")
+                }
+                else {
+                    $('#maintext2').append("<br>Position: " + i + " is INCORRECT number & INCORRECT placement!")
+                }
+
+            }
+
+            if (userkey == vaultkey) {
+                vaultinprogress = 0;
+                redwinner++;
+                dope += 10 + (vaulttries * 2)
+                $('#event1form').hide();
+                $('#maintext2').html(game_data['states'][current_state][0]['pass'])
+                $('#mainfoe').attr("src", "portals.png");
+                $('#mainbut').show();
+                $('#mainbut-1').text("Red Portal");
+                $('#mainbut-1').attr("onclick", "next_state('red_events')");
+                $('#mainbut-2').text("Green Portal");
+                $('#mainbut-2').attr("onclick", "next_state('green_events')");
+                check_done();
+
+            }
+            else if (vaulttries == 4) {
+                vaultinprogress = 0;
+                stim += 10 + (vaulttries * 2)
+                $('#event1form').hide();
+                $('#maintext2').html(game_data['states'][current_state][0]['fail'])
+                $('#mainfoe').attr("src", "portals.png");
+                $('#mainbut').hide();
+                $('#mainbut-1').text("Red Portal");
+                $('#mainbut-1').attr("onclick", "next_state('red_events')");
+                $('#mainbut-2').text("Green Portal");
+                $('#mainbut-2').attr("onclick", "next_state('green_events')");
+                setTimeout(function () {
+                    alert('*BOOOOOOOOM* You get launched through a random portal')
+                    if (randomint(0, 2) == 0) {
+                        next_state('red_events');
+                    }
+                    else {
+                        next_state('green_events');
+                    }
+                }, 2000)
+
+
+
+            }
+            vaulttries++;
+            stim += (vaulttries * 2);
+        }
+
+        function atm(kick) {
+            if (atminprogress == 0) {
+                $('#maintext2').html("You: Ouch that kind hurts")
+                atminprogress = 1;
+                kickprogress = 0;
+
+            }
+
+            if (kick == 'hard') {
+                kickprogress += 3;
+                stim += (kickprogress * 2);
+                if (randomint(0, 10) > 5) {
+                    $('#maintext2').html("Seems like you kicked it too hard and the safety mechanics kicked in... <br>Maybe you will have better luck next time?");
+                    atminprogress = 0;
+                    stim += 10;
+                    $('#mainfoe').attr("src", "portals.png");
+                    $('#mainbut').show();
+                    $('#mainbut-1').text("Red Portal");
+                    $('#mainbut-1').attr("onclick", "next_state('red_events')");
+                    $('#mainbut-2').text("Green Portal");
+                    $('#mainbut-2').attr("onclick", "next_state('green_events')");
+
+                }
+                else {
+                    $('#maintext2').text(game_data['states'][current_state][0]['kick'][randomint(0, 4)]['text']);
+                }
+            }
+            else if (kick == 'light') {
+                kickprogress += 1;
+                stim += (kickprogress * 2)
+                if (randomint(0, 10) > 7) {
+                    $('#maintext2').html("Seems like you kicked it too hard and the safety mechanics kicked in... <br>Maybe you will have better luck next time?");
+                    atminprogress = 0;
+                    stim += 10;
+                    $('#mainfoe').attr("src", "portals.png");
+                    $('#mainbut').show();
+                    $('#mainbut-1').text("Red Portal");
+                    $('#mainbut-1').attr("onclick", "next_state('red_events')");
+                    $('#mainbut-2').text("Green Portal");
+                    $('#mainbut-2').attr("onclick", "next_state('green_events')");
+
+                }
+                else {
+                    $('#maintext2').text(game_data['states'][current_state][0]['kick'][randomint(0, 4)]['text']);
+                }
+            }
+
+            if (kickprogress >= 7) {
+                $('#maintext2').html(game_data['states'][current_state][0]['pass']);
+                atminprogress = 0;
+                greenwinner++;
+                dope += 15;
+                $('#mainfoe').attr("src", "portals.png");
+                $('#mainbut').show();
+                $('#mainbut-1').text("Red Portal");
+                $('#mainbut-1').attr("onclick", "next_state('red_events')");
+                $('#mainbut-2').text("Green Portal");
+                $('#mainbut-2').attr("onclick", "next_state('green_events')");
+                check_done();
+            }
+        }
+
+        function riddle() {
+            if (riddleinprogress == 0) {
+                $('#maintext2').append(game_data['states'][current_state][1]['text2']);
+                $('#event').append(game_data['states'][current_state][1]['riddletextbox']);
+                $('#event').append(game_data['states'][current_state][1]['input']);
+                $('form').keypress(function (event) {
+                    return event.keyCode != 13;
+                });
+
+                riddlenumber = randomint(0, game_data['states'][current_state][1]['riddles'].length);
+                $('#riddletextbox').html(game_data['states'][current_state][1]['riddles'][riddlenumber]['text'])
+                riddleinprogress = 1;
+                riddleattemptes = 0;
+                $('#mainbut-1').hide();
+                //$('#event').show();
+                $('#maintext2').append("<div id='riddleattempts'>Riddle Attempt #" + riddleattemptes + "</div>")
+            }
+            var userriddle = document.getElementById('userriddle').value.toLowerCase();
+            riddleattemptes++;
+            $('#riddleattempts').text("Riddle Attempt #" + riddleattemptes);
+            //$('#maintext2').append("<div id='riddleattempts'>Riddle Attempt #" + riddleattemptes + "</div>")
+            if (riddleattemptes == 3) {
+                stim += 5;
+                $('#maintext2').append("<br>Hint:" + game_data['states'][current_state][1]['riddlehint'][riddlenumber]['text'])
+            }
+            else if (riddleattemptes == 5) {
+                $('#maintext2').html(game_data['states'][current_state][1]['fail']);
+                $('#mainfoe').attr("src", "portals.png");
+                $('#mainbut').show();
+                $('#mainbut-1').text("Red Portal");
+                $('#mainbut-1').attr("onclick", "next_state('red_events')");
+                $('#mainbut-1').show();
+                $('#mainbut-2').text("Green Portal");
+                $('#mainbut-2').attr("onclick", "next_state('green_events')");
+                $('#mainbut-2').show();
+                $('#event').hide();
+                riddleinprogress = 0;
+                riddleattemptes = 0;
+                stim += 10;
+            }
+            //console.log(userriddle)
+            console.log(game_data['states'][current_state][1]['riddleanswer'][riddlenumber]['text'])
+            if (userriddle == game_data['states'][current_state][1]['riddleanswer'][riddlenumber]['text'] || userriddle == game_data['states'][current_state][1]['riddleanswer'][riddlenumber]['text2']) {
+                $('#maintext2').html(game_data['states'][current_state][1]['pass']);
+                $('#mainfoe').attr("src", "portals.png");
+                $('#mainbut').show();
+                $('#mainbut-1').show();
+                $('#mainbut-1').text("Red Portal");
+                $('#mainbut-1').attr("onclick", "next_state('red_events')");
+                $('#mainbut-2').show()
+                $('#mainbut-2').text("Green Portal");
+                $('#mainbut-2').attr("onclick", "next_state('green_events')");
+                $('#event').empty();
+                redwinner++;
+                dope += 9;
+                check_done();
+                riddleinprogress = 0;
+                riddleattemptes = 0;
+            }
+        }
+
+        function bomb() {
+            if (bombinprogress == 0) {
+                $('#maintext2').html(game_data['states'][current_state][1]['text2']);
+                $('#mainbut-1').hide();
+                $('#event').show
+                $('#event').append('<div id="board" class="grid" style="left: 45%;top: 150px"></div>');
+                $('#board').append("<button id='a1' onclick='updatebomb(\"a1\")' class='biggerbutton'>a1</button>")
+                $('#board').append("<button id='a2' onclick='updatebomb(\"a2\")' class='biggerbutton'>a2</button>")
+                $('#board').append("<button id='a3' onclick='updatebomb(\"a3\")' class='biggerbutton'>a3</button>")
+
+                $('#board').append("<button id='b1' onclick='updatebomb(\"b1\")' class='biggerbutton'>b1</button>")
+                $('#board').append("<button id='b2' onclick='updatebomb(\"b2\")' class='biggerbutton'>b2</button>")
+                $('#board').append("<button id='b3' onclick='updatebomb(\"b3\")' class='biggerbutton'>b3</button>")
+
+                $('#board').append("<button id='c1' onclick='updatebomb(\"c1\")' class='biggerbutton'>c1</button>")
+                $('#board').append("<button id='c2' onclick='updatebomb(\"c2\")' class='biggerbutton'>c2</button>")
+                $('#board').append("<button id='c3' onclick='updatebomb(\"c3\")' class='biggerbutton'>c3</button>")
+
+                tiles = ['a1', 'a2', 'a3', 'b1', 'b2', 'b3', 'c1', 'c2', 'c3'];
+                bombbomb = tiles[randomint(0, 9)]
+                bombinprogress = 1;
+
+            }
+
+        }
+
+        function updatebomb(cord) {
+            document.getElementById(cord).disabled = true;
+
+            var indx = tiles.indexOf(cord)
+            tiles.splice(indx, 1)
+            //console.log(bombbomb)
+
+            if (tiles.length == 1) {
+                $('#maintext2').html(game_data['states'][current_state][1]['win'][1]['text']);
+                $('#event').empty();
+                $('#mainfoe').attr("src", "portals.png");
+                $('#mainbut').show();
+                $('#mainbut-1').text("Red Portal");
+                $('#mainbut-1').attr("onclick", "next_state('red_events')");
+                $('#mainbut-1').show();
+                $('#mainbut-2').text("Green Portal");
+                $('#mainbut-2').attr("onclick", "next_state('green_events')");
+                $('#mainbut-2').show();
+                bombinprogress = 0;
+                bombuserturn = 0;
+
+                greenwinner++;
+                dope += 10;
+                check_done();
+            }
+            else if (bombuserturn == 0) {
+                if (cord == bombbomb) {
+                    $('#maintext2').html(game_data['states'][current_state][1]['lose'][0]['text']);
+                    setTimeout(function () {
+                        $('#gameloop').hide();
+                        $('#Background').attr('style', "background-image: url('explosion.gif'); background-size: cover")
+                        setTimeout(function () {
+                            $('#gameloop').show();
+                            $('#Background').attr('style', "background-color: #3393AC")
+                        }, 1800)
+                        $('#maintext2').html(game_data['states'][current_state][1]['win'][0]['text2'])
+                        $('#maintext2').append(game_data['states'][current_state][1]['win'][0]['text3'])
+                        $('#mainfoe').attr("src", "portals.png");
+                        $('#mainbut').show();
+                        $('#mainbut-1').text("Red Portal");
+                        $('#mainbut-1').attr("onclick", "next_state('red_events')");
+                        $('#mainbut-1').show();
+                        $('#mainbut-2').text("Green Portal");
+                        $('#mainbut-2').attr("onclick", "next_state('green_events')");
+                        $('#mainbut-2').show();
+                    }, 1000)
+                    $('#event').empty();
+                    bombinprogress = 0;
+                    stim += 7
+                }
+                else {
+                    bombuserturn = 1;
+                    stim += 3
+                    $('#maintext2').html(game_data['states'][current_state][1]['safe'][randomint(0, 4)]['text'])
+                    $('#maintext2').append('<br>Shirobon: Hmmm...')
+                    temptile = tiles[randomint(0, tiles.length)]
+                    setTimeout("updatebomb(temptile)", 1000)
+                }
+
+            }
+            else if (bombuserturn == 1) {
+                if (cord == bombbomb) {
+                    $('#maintext2').html(game_data['states'][current_state][1]['lose'][0]['text2']);
+                    setTimeout(function () {
+                        $('#gameloop').hide();
+                        $('#Background').attr('style', "background-image: url('explosion.gif'); background-size: cover")
+                        setTimeout(function () {
+                            $('#gameloop').show();
+                            $('#Background').attr('style', "background-color: #3393AC")
+                        }, 1800)
+                        $('#maintext2').html(game_data['states'][current_state][1]['win'][0]['text'])
+                        $('#mainfoe').attr("src", "portals.png");
+                        $('#mainbut').show();
+                        $('#mainbut-1').text("Red Portal");
+                        $('#mainbut-1').attr("onclick", "next_state('red_events')");
+                        $('#mainbut-1').show();
+                        $('#mainbut-2').text("Green Portal");
+                        $('#mainbut-2').attr("onclick", "next_state('green_events')");
+                        $('#mainbut-2').show();
+                        bombinprogress = 0;
+                        bombuserturn = 0;
+                        greenwinner++;
+                        dope += 10;
+                        check_done();
+                    }, 2000)
+                    $('#event').empty();
+
+
+                }
+                else {
+                    bombuserturn = 0;
+                }
+            }
+        }
+
+        function movebutton() {
+            var top = randomint(0, 100);
+            var left = randomint(0, 100);
+            $('#mainbut-2').css({
+                "top": top + "%",
+                "left": left + "%"
+            })
+        }
+
+        function check_done() {
+
+
+            if (redwinner == 4) {
+                alert("*The Red Portal Shines Bright*. You: Maybe that means I am done with the red protals?");
+                redwinner++;
+                dope += 4
+
+            }
+            else if (greenwinner == 4) {
+                alert("*The Green Portal Shines Bright*. You: Maybe that means I am done with the green protals?");
+                greenwinner++;
+                dope += 4
+            }
+            else if (redwinner == 2) {
+                alert("*The Green Portal Rumbles*. You: Maybe I should try to complete more Green portals")
+                redwinner++;
+                dope += 2
+            }
+            else if (greenwinner == 2) {
+                alert("*The Red Portal Rumbles*. You: Maybe I should try to complete more Red portals")
+                greenwinner++;
+                dope += 2
+            }
+
+            if (redwinner >= 5 && greenwinner >= 5) {
+                $('#maintext2').html("*You see the portal's lights shine towards a new pathway*<br>You: This must lead to the village");
+                $('#mainbut-1').text("Enter the portal");
+                $('#mainbut-1').attr("onclick", "next_state('ending')")
+                $('#mainbut-2').text("Don't enter the portal")
+                $('#mainbut-2').attr('onmouseover', 'movebutton()')
+                $('#mainfoe').attr('src', 'finalportal.png')
+                $('#but-3').attr('onclick', 'alert("Go in portal :)")')
+                //console.log("WINNNER")
+                dope += 12;
+
+            }
+
+        }
+
+        function next_state(state) {
+            current_state = state;
+
+            if (current_state == 'start_game') {
+                $('#Main_Menu').hide();
+                $('#New_Char').show();
+                if (startgamecounter < 100) {
+                    if (startgamecounter == 0) {
+                        $('#maintext').html(game_data['states'][current_state]['text'][startgamecounter]['text']);
+                        var newButton = $("<form id='formname' style='position: relative; top: 150px;   '><input type='text' id='charname'><button id='subButton' type='button' onclick=\"getcharname(); next_state('start_game')\">Submit</button></form>");
+                        newButton.insertAfter('#maintext');
+                        $('form').keypress(function (event) {
+                            return event.keyCode != 13;
+                        });
+
+                    }
+                    else if (startgamecounter == 1) {
+                        $('#maintext').html(game_data['states'][current_state]['text'][startgamecounter]['text']);
+                        $('#formname').remove();
+                        $('#maintext').append(charectername);
+                        $('#maintext').append(game_data['states'][current_state]['text'][startgamecounter]['text2'])
+
+                        $('#but-1').show();
+                        $('#but-1').text('next');
+                        $('#but-1').attr("onclick", "next_state('start_game')")
+
+                    }
+                    else if (startgamecounter == 2) {
+                        $('#maintext').html(game_data['states'][current_state]['text'][startgamecounter]['text']);
+                    }
+                    else if (startgamecounter == 3) {
+                        $('#maintext').html(game_data['states'][current_state]['text'][startgamecounter]['text']);
+                        $('#maintext').append(charectername);
+                    }
+                    else if (startgamecounter == 4) {
+                        $('#maintext').html(game_data['states'][current_state]['text'][startgamecounter]['text']);
+                    }
+                    else if (startgamecounter == 5) {
+                        $('#maintext').html(game_data['states'][current_state]['text'][startgamecounter]['text']);
+                    }
+                    else if (startgamecounter == 6) {
+                        $('#maintext').html(game_data['states'][current_state]['text'][startgamecounter]['text']);
+                    }
+                    else if (startgamecounter == 7) {
+                        $('#maintext').html(game_data['states'][current_state]['text'][startgamecounter]['text']);
+                        $('body').attr('style', "background-image: url('carzoom.gif'); background-size: cover");
+                    }
+                    else if (startgamecounter == 8) {
+                        $('#maintext').html(game_data['states'][current_state]['text'][startgamecounter]['text']);
+                    }
+                    else if (startgamecounter == 9) {
+                        $('#maintext').html(game_data['states'][current_state]['text'][startgamecounter]['text']);
+                        $('#but-1').hide();
+                        $('body').attr('style', "background-image: url('preview-small.jpg'); background-size: cover");
+                        setTimeout("next_state('start_game')", 2000);
+
+                    }
+                    else if (startgamecounter == 10) {
+                        $('body').attr('style', "background-image: url('carzoom.gif'); background-size: cover");
+                        $('#but-1').show();
+                        $('#maintext').html(game_data['states'][current_state]['text'][startgamecounter]['text']);
+                    }
+                    else if (startgamecounter == 11) {
+                        $('#but-1').text('exit');
+                        $('#but-1').attr("onclick", "next_state('gameplay_loop')");
+                        $('#maintext').html(game_data['states'][current_state]['text'][startgamecounter]['text']);
+                    }
+                    startgamecounter++;
+                }
+            }
+
+            if (current_state == 'gameplay_loop') {
+                //$('body').attr("style","background-image: url(PandaViral.png)")
+                $('#New_Char').hide();
+                $('#Main_Menu').hide();
+                $('#gameloop').show();
+                //console.log(gameplaycounter)
+                if (gameplaycounter == 0) {
+                    $('#maintext2').html(game_data['states'][current_state]['intro'][gameplaycounter]['text']);
+                    $('#but-2').show();
+                    $('#but-2').text('next');
+                    $('#but-2').attr("onclick", "next_state('gameplay_loop')")
+                    $('body').attr("style", "background-color: #3393AC")
+                    $('#mainbut').hide();
+                }
+                else if (gameplaycounter == 1) {
+                    $('#maintext2').html(game_data['states'][current_state]['intro'][gameplaycounter]['text']);
+                    $('#you').attr("src", "YouHmm.png")
+                    $('#mainfoe').attr("src", "Sunwukongstatue.png")
+                }
+                else if (gameplaycounter == 2) {
+                    $('#maintext2').html(game_data['states'][current_state]['intro'][gameplaycounter]['text']);
+                }
+                else if (gameplaycounter == 3) {
+                    $('#maintext2').html(game_data['states'][current_state]['intro'][gameplaycounter]['text']);
+                    $('#mainfoe').attr("src", "wukong.jpg");
+                }
+                else if (gameplaycounter == 4) {
+                    $('#maintext2').html(game_data['states'][current_state]['intro'][gameplaycounter]['text']);
+                    $('#mainfoe').attr("src", "portals.png");
+                    $('#mainbut').show();
+                    $('#mainbut-1').text("Red Portal");
+                    $('#mainbut-1').attr("onclick", "next_state('red_events')");
+                    $('#mainbut-2').text("Green Portal");
+                    $('#mainbut-2').attr("onclick", "next_state('green_events')");
+                    alert("You will go through many \"Minigames\" where the red portal are more skill games while the green are more chance games.\nYou will have to beat a certain amount of red AND green portals to reach the village.\nChoose wisely and best of luck.\n\nYou can click the '?' to get instructions!")
+                    $('#but-3').show();
+                    $('#but-2').hide();
+                    $('#but-3').attr("onclick", 'alert("You will go through many Minigames where the red portal are more skill games while the green are more chance games.You will have to beat a certain amount of red AND green portals to reach the village.Choose wisely and best of luck.You can click the ? to get instructions!")');
+                }
+                gameplaycounter++;
+            }
+
+            if (current_state == 'red_events') {
+                $('#event').empty();
+                $('#New_Char').hide();
+                $('#Main_Menu').hide();
+                $('#gameloop').show();
+                var temp = randomint(0, game_data['states'][current_state].length);
+
+                if (temp == 0) {
+                    $('#mainbut').hide()
+                    $('#but-3').show();
+                    $('#but-3').attr('onclick', game_data['states'][current_state][temp]['info'])
+                    $('#maintext2').html(game_data['states'][current_state][temp]['text'])
+                    $('#event').append(game_data['states'][current_state][temp]['input'])
+                    $('#mainfoe').attr("src", "vault.png ");
+                    $('form').keypress(function (event) {
+                        return event.keyCode != 13;
+                    });
+
+
+                }
+                else if (temp == 1) {
+                    $('#mainbut').show();
+                    $('#mainbut-2').hide();
+                    $('#but-3').show();
+                    $('#but-3').attr('onclick', game_data['states'][current_state][temp]['info']);
+                    $('#maintext2').html(game_data['states'][current_state][temp]['text']);
+                    $('#mainbut-1').show();
+                    $('#mainbut-1').text('Read the note');
+                    $('#mainbut-1').attr('onclick', 'riddle()')
+                    $('#mainfoe').attr("src", "note.png ");
+                }
+
+            }
+
+            if (current_state == 'green_events') {
+                $('#event').empty();
+                $('#New_Char').hide();
+                $('#Main_Menu').hide();
+                $('#gameloop').show();
+                var temp = randomint(0, game_data['states'][current_state].length);
+                if (temp == 0) {
+                    $('#maintext2').html(game_data['states'][current_state][temp]['text']);
+                    $('#mainbut').show()
+                    $('#but-3').show();
+                    $('#but-3').attr('onclick', game_data['states'][current_state][temp]['info'])
+                    $('#mainfoe').attr("src", "atm.jpg");
+                    $('#mainbut-1').text("Kick Lightly");
+                    $('#mainbut-1').attr("onclick", "atm('light')");
+                    $('#mainbut-2').text("Kick Hard");
+                    $('#mainbut-2').attr("onclick", "atm('hard')");
+
+                }
+                else if (temp == 1) {
+                    $('#maintext2').html(game_data['states'][current_state][temp]['text']);
+                    $('#mainbut').show();
+                    $('#mainbut-1').show();
+                    $('#mainbut-1').text('Take a seat');
+                    $('#mainbut-1').attr('onclick', 'bomb()');
+                    $('#mainbut-2').hide();
+                    $('#you').attr("src", "YouHmm.png")
+                    $('#mainfoe').attr("src", "bomberman.png")
+                    $('#but-3').show();
+                    $('#but-3').attr('onclick', game_data['states'][current_state][temp]['info'])
+
+
+                }
+            }
+
+            if (current_state == 'ending') {
+                $('#event').empty();
+                $('#New_Char').hide();
+                $('#Main_Menu').hide();
+                $('#gameloop').hide();
+                $('#end').show();
+
+                if (endingcounter == 0) {
+                    $('#maintext3').html(game_data['states'][current_state]['text'][endingcounter]['text']);
+                    $('#maintext3').append(charectername);
+                    $('#maintext3').append(game_data['states'][current_state]['text'][endingcounter]['text2']);
+                    $('#but-4').text("Follow");
+                    $('#but-4').show();
+                    $('#but-4').attr("onclick", "next_state('ending')");
+                }
+                else if (endingcounter == 1) {
+                    $('#maintext3').html(game_data['states'][current_state]['text'][endingcounter]['text']);
+                    $('#but-4').text("Enter");
+                }
+                else if (endingcounter == 2) {
+                    $('body').attr("style", "background-image: url('chippi.gif'); background-size: cover")
+                    $('#end').hide();
+                    $('<audio autoplay loop><source src="chippichappa.mp3" type="audio/mpeg"></audio>').insertAfter('#end')
+                }
+
+                endingcounter++;
+            }
+        }
+    </script>
+</body>
+
+</html>
